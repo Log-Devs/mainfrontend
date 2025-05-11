@@ -84,7 +84,7 @@ Prerequisites
 CI/CD: GitHub Actions
 ```
 # Clone repository
-git clone https://github.com/[Your-Org]/mainfrontend.git
+git clone git@github.com:Log-Devs/mainfrontend.git
 cd mainfrontend
 
 # Install dependencies
