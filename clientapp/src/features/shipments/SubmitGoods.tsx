@@ -137,13 +137,29 @@ const SubmitGoods = () => {
 	};
 
 	// Use browser geolocation for real current location
-	const handleDetectLocation = () => {
+	const handleDetectLocation = async () => {
 		setLocating(true);
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(
-				(position) => {
+				async (position) => {
 					const { latitude, longitude } = position.coords;
 					setMapCoords({ lat: latitude, lon: longitude });
+
+					// Reverse geocode to get address details
+					try {
+						const address = await import('./utils').then(m => m.reverseGeocode(latitude, longitude));
+						const resolved = await address;
+						setFormData(prev => ({
+							...prev,
+							senderCity: resolved.city || resolved.town || resolved.village || resolved.hamlet || '',
+							senderState: resolved.state || '',
+							senderZip: resolved.postcode || '',
+							senderCountry: prev.senderCountry || resolved.country || '' // Only set if not already set
+						}));
+					} catch {
+						// Optionally handle error
+					}
+
 					setLocating(false);
 					setLocationSuccess(true);
 					setLocationError(null);

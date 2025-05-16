@@ -6,6 +6,10 @@ const COUNTRY_OPTIONS = [
 	{ id: "us", name: "United States", code: "+1", icon: "🇺🇸" },
 ];
 
+const US_STATES = [
+	"Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
+];
+
 const mockRecipientLookup = (id: string) => {
 	// Simulate lookup. Replace with real API in production.
 	if (id === "GH12345") return { name: "Kwame Nkrumah" };
@@ -36,10 +40,14 @@ const RecipientForm = ({
 }) => {
 	const [country, setCountry] = useState(formData.recipientCountry || "us");
 	const [phoneCode, setPhoneCode] = useState("+1");
+	const [recipientType, setRecipientType] = useState(formData.recipientType || "user");
 	const [region, setRegion] = useState("");
 	const [recipientId, setRecipientId] = useState(formData.recipientId || "");
 	const [recipientName, setRecipientName] = useState(formData.recipientName || "");
+	const [recipientPhone, setRecipientPhone] = useState(formData.recipientPhone || "");
+	const [recipientAddress, setRecipientAddress] = useState(formData.recipientAddress || "");
 	const [idLookupDone, setIdLookupDone] = useState(false);
+	const [lookupResult, setLookupResult] = useState<any>(null);
 
 	useEffect(() => {
 		if (country === "ghana") setPhoneCode("+233");
@@ -47,21 +55,42 @@ const RecipientForm = ({
 	}, [country]);
 
 	useEffect(() => {
-		if (recipientId && !idLookupDone) {
+		if (recipientType === "user" && recipientId && !idLookupDone) {
 			const result = mockRecipientLookup(recipientId);
 			if (result) {
 				setRecipientName(result.name);
+				setRecipientPhone(result.phone || "");
+				setRecipientAddress(result.address || "");
+				setCountry(result.country || country);
 				setIdLookupDone(true);
+				setLookupResult(result);
 			} else {
 				setRecipientName("");
+				setRecipientPhone("");
+				setRecipientAddress("");
 				setIdLookupDone(false);
+				setLookupResult(null);
 			}
 		}
 		if (!recipientId) {
 			setRecipientName("");
+			setRecipientPhone("");
+			setRecipientAddress("");
 			setIdLookupDone(false);
+			setLookupResult(null);
 		}
-	}, [recipientId, idLookupDone]);
+	}, [recipientId, idLookupDone, recipientType]);
+
+	const handleRecipientTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setRecipientType(e.target.value);
+		setIdLookupDone(false);
+		setRecipientId("");
+		setRecipientName("");
+		setRecipientPhone("");
+		setRecipientAddress("");
+		setLookupResult(null);
+		onInputChange({ target: { name: "recipientType", value: e.target.value } } as any);
+	};
 
 	const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		setCountry(e.target.value);
@@ -83,33 +112,65 @@ const RecipientForm = ({
 		onInputChange(e);
 	};
 
+	const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setRecipientPhone(e.target.value);
+		onInputChange(e);
+	};
+
+	const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setRecipientAddress(e.target.value);
+		onInputChange(e);
+	};
+
 	return (
 		<div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-6 border border-gray-100 dark:border-gray-700">
 			<h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-200">Recipient Information</h2>
-			<div className="space-y-2">
-				<label htmlFor="recipientId" className="block text-sm font-medium text-gray-600 dark:text-gray-300">Recipient ID (if known)</label>
-				<input
-					type="text"
-					id="recipientId"
-					name="recipientId"
-					value={recipientId}
-					onChange={handleIdChange}
-					className="w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100"
-					placeholder="Enter recipient ID"
-				/>
+			<div className="flex gap-4 mb-4">
+				<label className={`flex items-center gap-2 px-4 py-2 rounded-lg border cursor-pointer transition-all ${recipientType === "user" ? "bg-blue-100 border-blue-400" : "bg-gray-50 border-gray-200"}`}>
+					<input type="radio" name="recipientType" value="user" checked={recipientType === "user"} onChange={handleRecipientTypeChange} className="accent-blue-600" />
+					Registered User
+				</label>
+				<label className={`flex items-center gap-2 px-4 py-2 rounded-lg border cursor-pointer transition-all ${recipientType === "guest" ? "bg-blue-100 border-blue-400" : "bg-gray-50 border-gray-200"}`}>
+					<input type="radio" name="recipientType" value="guest" checked={recipientType === "guest"} onChange={handleRecipientTypeChange} className="accent-blue-600" />
+					Not a User
+				</label>
 			</div>
-			{recipientId && recipientName ? (
-				<div className="space-y-2">
-					<label className="block text-sm font-medium text-gray-600 dark:text-gray-300">Recipient Name</label>
-					<input
-						type="text"
-						value={recipientName}
-						readOnly
-						className="w-full rounded-md border px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100"
-					/>
+
+			{recipientType === "user" ? (
+				<div className="space-y-4">
+					<div className="space-y-2">
+						<label htmlFor="recipientId" className="block text-sm font-medium text-gray-600 dark:text-gray-300">Recipient ID</label>
+						<input
+							type="text"
+							id="recipientId"
+							name="recipientId"
+							value={recipientId}
+							onChange={handleIdChange}
+							className="w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100"
+							placeholder="Enter recipient ID"
+						/>
+					</div>
+					{idLookupDone && lookupResult ? (
+						<div className="space-y-2 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-md border border-blue-100 dark:border-blue-800">
+							<div className="flex gap-4">
+								<div className="flex-1">
+									<label className="block text-sm font-medium text-gray-600 dark:text-gray-300">Name</label>
+									<input type="text" value={recipientName} readOnly className="w-full rounded-md border px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100" />
+								</div>
+								<div className="flex-1">
+									<label className="block text-sm font-medium text-gray-600 dark:text-gray-300">Phone</label>
+									<input type="text" value={recipientPhone} readOnly className="w-full rounded-md border px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100" />
+								</div>
+							</div>
+							<div>
+								<label className="block text-sm font-medium text-gray-600 dark:text-gray-300">Address</label>
+								<input type="text" value={recipientAddress} readOnly className="w-full rounded-md border px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100" />
+							</div>
+						</div>
+					) : null}
 				</div>
 			) : (
-				<>
+				<div className="space-y-4">
 					<div className="space-y-2">
 						<label htmlFor="recipientName" className="block text-sm font-medium text-gray-600 dark:text-gray-300">Full Name *</label>
 						<input
@@ -118,148 +179,56 @@ const RecipientForm = ({
 							name="recipientName"
 							value={recipientName}
 							onChange={handleNameChange}
-							required
 							className="w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100"
 							placeholder="Enter full name"
+							required
 						/>
 					</div>
 					<div className="space-y-2">
-						<label htmlFor="recipientCountry" className="block text-sm font-medium text-gray-600 dark:text-gray-300">Country *</label>
-						<select
-							id="recipientCountry"
-							name="recipientCountry"
-							value={country}
-							onChange={handleCountryChange}
+						<label htmlFor="recipientPhone" className="block text-sm font-medium text-gray-600 dark:text-gray-300">Phone Number *</label>
+						<input
+							type="tel"
+							id="recipientPhone"
+							name="recipientPhone"
+							value={recipientPhone}
+							onChange={handlePhoneChange}
+							required
 							className="w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100"
-						>
-							{COUNTRY_OPTIONS.map(opt => (
-								<option key={opt.id} value={opt.id}>{opt.icon} {opt.name}</option>
-							))}
-						</select>
+							placeholder="Phone number"
+						/>
 					</div>
 					<div className="space-y-2">
-						<label htmlFor="recipientPhone" className="block text-sm font-medium text-gray-600 dark:text-gray-300">Phone Number *</label>
-						<div className="flex items-center gap-2">
-							<span className="text-lg">{COUNTRY_OPTIONS.find(c => c.id === country)?.icon}</span>
-							<span className="text-sm font-semibold">{phoneCode}</span>
-							<input
-								type="tel"
-								id="recipientPhone"
-								name="recipientPhone"
-								required
-								value={formData.recipientPhone || ""}
-								onChange={onInputChange}
-								className="flex-1 rounded-md border px-3 py-2 text-sm bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100"
-								placeholder="Phone number"
-							/>
-						</div>
+						<label htmlFor="recipientAddress" className="block text-sm font-medium text-gray-600 dark:text-gray-300">Street Address *</label>
+						<input
+							type="text"
+							id="recipientAddress"
+							name="recipientAddress"
+							value={recipientAddress}
+							onChange={handleAddressChange}
+							required
+							className="w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100"
+							placeholder="Street address"
+						/>
 					</div>
-					{country === "ghana" ? (
-						<>
-							<div className="space-y-2">
-								<label htmlFor="recipientAddress" className="block text-sm font-medium text-gray-600 dark:text-gray-300">Street Address *</label>
-								<input
-									type="text"
-									id="recipientAddress"
-									name="recipientAddress"
-									required
-									value={formData.recipientAddress || ""}
-									onChange={onInputChange}
-									className="w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100"
-									placeholder="Street address"
-								/>
-							</div>
-							<div className="space-y-2">
-								<label htmlFor="recipientCity" className="block text-sm font-medium text-gray-600 dark:text-gray-300">City *</label>
-								<input
-									type="text"
-									id="recipientCity"
-									name="recipientCity"
-									required
-									value={formData.recipientCity || ""}
-									onChange={onInputChange}
-									className="w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100"
-									placeholder="City"
-								/>
-							</div>
-							<div className="space-y-2">
-								<label htmlFor="recipientRegion" className="block text-sm font-medium text-gray-600 dark:text-gray-300">Region *</label>
-								<select
-									id="recipientRegion"
-									name="recipientRegion"
-									required
-									value={formData.recipientRegion || ""}
-									onChange={onInputChange}
-									className="w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100"
-								>
-									<option value="">Select region</option>
-									{GHANA_REGIONS.map(region => (
-										<option key={region.id} value={region.name}>{region.name}</option>
-									))}
-								</select>
-							</div>
-						</>
-					) : country === "us" ? (
-						<>
-							<div className="space-y-2">
-								<label htmlFor="recipientAddress" className="block text-sm font-medium text-gray-600 dark:text-gray-300">Street Address *</label>
-								<input
-									type="text"
-									id="recipientAddress"
-									name="recipientAddress"
-									required
-									value={formData.recipientAddress || ""}
-									onChange={onUsaAddressInput}
-									autoComplete="off"
-									className="w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100"
-									placeholder="Street address"
-								/>
-								{addressLoading && <div className="text-xs text-gray-400">Loading suggestions...</div>}
-								{addressSuggestions.length > 0 && (
-									<ul className="bg-white border rounded-md mt-1 max-h-40 overflow-y-auto shadow-lg z-10">
-										{addressSuggestions.map((suggestion: { id: string; label: string }, idx: number) => (
-											<li
-												key={idx}
-												className={`px-3 py-2 cursor-pointer text-sm ${idx === suggestionIndex ? 'bg-blue-50' : ''}`}
-												onClick={() => onSuggestionSelect(suggestion)}
-												onMouseEnter={() => onSuggestionSelect(suggestion)}
-											>
-												<div>{highlightMatch(suggestion, formData.recipientAddress)}</div>
-											</li>
-										))}
-									</ul>
-								)}
-								{addressError && <div className="text-xs text-red-500">{addressError}</div>}
-							</div>
-							<div className="space-y-2">
-								<label htmlFor="recipientCity" className="block text-sm font-medium text-gray-600 dark:text-gray-300">City *</label>
-								<input
-									type="text"
-									id="recipientCity"
-									name="recipientCity"
-									required
-									value={formData.recipientCity || ""}
-									onChange={onInputChange}
-									className="w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100"
-									placeholder="City"
-								/>
-							</div>
-							<div className="space-y-2">
-								<label htmlFor="recipientState" className="block text-sm font-medium text-gray-600 dark:text-gray-300">State *</label>
-								<input
-									type="text"
-									id="recipientState"
-									name="recipientState"
-									required
-									value={formData.recipientState || ""}
-									onChange={onInputChange}
-									className="w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100"
-									placeholder="State"
-								/>
-							</div>
-						</>
-					) : null}
-				</>
+					{country === "us" && recipientType !== "user" && (
+						<div className="space-y-2">
+							<label htmlFor="recipientState" className="block text-sm font-medium text-gray-600 dark:text-gray-300">State *</label>
+							<select
+								id="recipientState"
+								name="recipientState"
+								required
+								value={formData.recipientState || ""}
+								onChange={onInputChange}
+								className="w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100"
+							>
+								<option value="">Select state</option>
+								{US_STATES.map(state => (
+									<option key={state} value={state}>{state}</option>
+								))}
+							</select>
+						</div>
+					)}
+				</div>
 			)}
 		</div>
 	);

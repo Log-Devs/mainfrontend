@@ -1,3 +1,5 @@
+import { DUMMY_USER } from '../../app-config';
+
 // Package category types with associated colors
 export const PACKAGE_CATEGORIES = [
 	{
@@ -132,26 +134,32 @@ export const GHANA_REGIONS = [
 ];
 // Define and export initialFormData
 export const initialFormData = {
-	senderName: "",
-	senderAddress: "",
-	senderContact: "",
-	senderEmail: "",
-	senderPhone: "",
-	senderCity: "",
-	senderState: "",
-	senderZip: "",
-	senderCountry: "",
-	recipientName: "",
-	recipientAddress: "",
-	recipientContact: "",
-	recipientCountry: "",
-	recipientPhoneCountryCode: "",
-	recipientId: "",
+	senderName: DUMMY_USER.fullName,
+	senderAddress: DUMMY_USER.address,
+	senderContact: DUMMY_USER.email,
+	senderEmail: DUMMY_USER.email,
+	senderPhone: DUMMY_USER.phone,
+	senderCity: DUMMY_USER.city,
+	senderState: DUMMY_USER.state,
+	senderZip: DUMMY_USER.zip,
+	senderCountry: DUMMY_USER.country,
+	recipientName: DUMMY_USER.fullName,
+	recipientAddress: DUMMY_USER.address,
+	recipientContact: DUMMY_USER.email,
+	recipientEmail: DUMMY_USER.email,
+	recipientPhone: DUMMY_USER.phone,
+	recipientCity: DUMMY_USER.city,
+	recipientState: DUMMY_USER.state,
+	recipientZip: DUMMY_USER.zip,
 	recipientKnowsId: false,
+	recipientCountry: "",
+	freightType: "",
 	packageType: "",
 	packageCategory: "",
-	packageWeight: "",
 	packageDescription: "",
-	freightType: "",
-	// Add more fields as needed for your forms
+	packageNote: "", // Added packageNote with a default value
+	recipientPhoneCountryCode: '', // Added missing property
+	recipientId: '', // Added missing property
+	packageValue: '',
+	packageWeight: '', // Changed from 0 (number) to '' (string) to match FormData interface
 };

@@ -16,6 +16,7 @@ import {
 	FileText,
 	BarChart4
 } from "lucide-react";
+import { DUMMY_USER } from '../../app-config';
 
 // Define shipment status types
 type ShipmentStatus =
@@ -86,9 +87,9 @@ const ShipmentDetails = () => {
 				trackingNumber: id ? `TRK-${id}` : "TRK-12345678",
 				status: "IN_TRANSIT", // Default status
 				currentLocation: "local_warehouse",
-				senderName: "John Smith",
-				senderAddress: "123 Main St, New York, NY 10001, USA",
-				senderContact: "+1 (555) 123-4567",
+				senderName: DUMMY_USER.fullName,
+				senderAddress: DUMMY_USER.address,
+				senderContact: DUMMY_USER.phone,
 				recipientName: "Jane Doe",
 				recipientAddress: "456 Market St, San Francisco, CA 94105, USA",
 				recipientContact: "+1 (555) 987-6543",
