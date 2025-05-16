@@ -1,73 +1,51 @@
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+// import axios from "axios"; // Uncomment when ready to use APIs
+// import { fetchDashboardData, submitShipment, fetchHistory, fetchAwaitingShipments, updateSettings } from "./api"; // Example API imports
+// API integration placeholders are marked throughout this file.
+// See each section for where to add API calls in the future.
 import "./App.css";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import DashboardLayout from "./components/layout/DashboardLayout";
+import Dashboard from "./features/dashboard/Dashboard";
+import SubmitGoods from "./features/shipments/SubmitGoods";
+import PastShipments from "./features/shipments/PastShipments";
+import Profile from "./features/profile/Profile";
+import ReportIssue from "./features/report/ReportIssue";
 
-function Dashboard() {
-  console.log("Rendering Dashboard");
+function AppRoutes() {
+  const location = useLocation();
+  // Extract the active key from the current path
+  const pathToKey: Record<string, string> = {
+    "/dashboard": "dashboard",
+    "/submit": "submit",
+    "/awaiting": "awaiting",
+    "/history": "history",
+    "/report": "report",
+    "/settings": "settings",
+  };
+  const active = pathToKey[location.pathname] || "dashboard";
+
   return (
-    <div>
-      <h1>Dashboard</h1>
-      <p>Welcome to your dashboard! (React + Vite)</p>
-      <button
-        onClick={() => {
-          localStorage.removeItem("jwt");
-          window.location.reload();
-        }}
-      >
-        Logout
-      </button>
-    </div>
-  );
-}
-
-function RequireAuth({ children }: { children: React.ReactNode }) {
-  const [checked, setChecked] = useState(false);
-  const [authed, setAuthed] = useState(false);
-
-  useEffect(() => {
-    // Check for JWT in URL first
-    const url = new URL(window.location.href);
-    const jwtFromUrl = url.searchParams.get("jwt");
-    if (jwtFromUrl) {
-      localStorage.setItem("jwt", jwtFromUrl);
-      // Remove jwt param from URL
-      url.searchParams.delete("jwt");
-      window.history.replaceState(
-        {},
-        document.title,
-        url.pathname + url.search
-      );
-    }
-    const hasJwt = Boolean(localStorage.getItem("jwt"));
-    setAuthed(hasJwt);
-    setChecked(true);
-    if (!hasJwt) {
-      window.location.href =
-        import.meta.env.VITE_LOGIN_URL || "http://localhost:3000/login";
-    }
-  }, []);
-
-  if (!checked) return null;
-  if (!authed) return null;
-  return <>{children}</>;
-}
-
-function App() {
-  return (
-    <BrowserRouter>
+    <DashboardLayout active={active} setActive={() => { }}>
       <Routes>
-        <Route
-          path="/dashboard"
-          element={
-            <RequireAuth>
-              <Dashboard />
-            </RequireAuth>
-          }
-        />
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/submit" element={<SubmitGoods />} />
+        <Route path="/awaiting" element={<PastShipments />} />
+        <Route path="/history" element={<PastShipments />} />
+        <Route path="/settings" element={<Profile />} />
+        <Route path="/report" element={<ReportIssue />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
-    </BrowserRouter>
+    </DashboardLayout>
   );
 }
+
+const App = () => {
+  return (
+    <Router>
+      <AppRoutes />
+    </Router>
+  );
+};
 
 export default App;
