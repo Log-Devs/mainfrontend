@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { MapPin, Phone, User, Flag, Globe, Building, Search, CheckCircle, X, AlertCircle, Home, Info } from "lucide-react";
+import { MapPin, Phone, User, Flag, Globe, Building, Search, CheckCircle, AlertCircle, Home, Info } from "lucide-react";
 
 // Constants
 const COUNTRY_OPTIONS = [
@@ -47,7 +47,30 @@ const mockRecipientLookup = (id: string): Recipient | null => {
 	return null;
 };
 
-const RecipientForm = ({
+interface RecipientFormProps {
+	formData: {
+		recipientCountry?: string;
+		recipientId?: string;
+		recipientName?: string;
+		recipientPhone?: string;
+		recipientAddress?: string;
+		recipientCity?: string;
+		recipientRegion?: string;
+		recipientState?: string;
+		recipientZip?: string;
+		[key: string]: string | undefined; // Allow additional dynamic fields
+	};
+	onInputChange: (e: { target: { name: string; value: string } }) => void;
+	onUsaAddressInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	addressSuggestions: string[];
+	addressLoading: boolean;
+	addressError: string | null;
+	onSuggestionSelect: (suggestion: string) => void;
+	suggestionIndex: number;
+	highlightMatch: (suggestion: string, input: string) => React.ReactNode;
+}
+
+const RecipientForm: React.FC<RecipientFormProps> = ({
 	formData,
 	onInputChange,
 	onUsaAddressInput,
@@ -63,7 +86,7 @@ const RecipientForm = ({
 	const [recipientId, setRecipientId] = useState(formData.recipientId || "");
 	const [recipientName, setRecipientName] = useState(formData.recipientName || "");
 	const [idLookupDone, setIdLookupDone] = useState(false);
-	const [lookupStatus, setLookupStatus] = useState(null); // "success", "error", or null
+	const [lookupStatus, setLookupStatus] = useState<"success" | "error" | null>(null); // "success", "error", or null
 	const [isFormValid, setIsFormValid] = useState(false);
 
 	// Update phone code when country changes

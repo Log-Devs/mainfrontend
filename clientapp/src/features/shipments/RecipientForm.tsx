@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { GHANA_REGIONS } from "./constants";
+// import { GHANA_REGIONS } from "./constants";
 
 const COUNTRY_OPTIONS = [
 	{ id: "ghana", name: "Ghana", code: "+233", icon: "🇬🇭" },
@@ -20,8 +20,6 @@ const mockRecipientLookup = (id: string) => {
 const RecipientForm = ({
 	formData,
 	onInputChange,
-	onUsaAddressInput,
-	addressSuggestions,
 	addressLoading,
 	addressError,
 	onSuggestionSelect,
@@ -31,7 +29,6 @@ const RecipientForm = ({
 	formData: any;
 	onInputChange: (e: React.ChangeEvent<any>) => void;
 	onUsaAddressInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
-	addressSuggestions: { id: string; label: string }[];
 	addressLoading: boolean;
 	addressError: string | null;
 	onSuggestionSelect: (suggestion: { id: string; label: string }) => void;
@@ -89,21 +86,36 @@ const RecipientForm = ({
 		setRecipientPhone("");
 		setRecipientAddress("");
 		setLookupResult(null);
-		onInputChange({ target: { name: "recipientType", value: e.target.value } } as any);
+		onInputChange({ target: { name: "recipientType", value: e.target.value } } as React.ChangeEvent<HTMLInputElement>);
 	};
 
 	const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		setCountry(e.target.value);
 		onInputChange({
 			target: { name: "recipientCountry", value: e.target.value },
-		} as any);
+		} as React.ChangeEvent<HTMLSelectElement>);
 	};
+
+	<div className="space-y-2">
+		<label htmlFor="recipientCountry" className="block text-sm font-medium text-gray-600 dark:text-gray-300">Country *</label>
+		<select
+			id="recipientCountry"
+			name="recipientCountry"
+			onChange={handleCountryChange}
+			value={country}
+			className="w-full rounded-md border px-3 py-2 text-sm bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100"
+		>
+			{COUNTRY_OPTIONS.map(option => (
+				<option key={option.id} value={option.id}>{option.name}</option>
+			))}
+		</select>
+	</div>
 
 	const handleIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setRecipientId(e.target.value);
 		onInputChange({
 			target: { name: "recipientId", value: e.target.value },
-		} as any);
+		} as React.ChangeEvent<HTMLInputElement>);
 		setIdLookupDone(false);
 	};
 
