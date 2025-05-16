@@ -8,3 +8,8 @@ body {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom gray text utility for extra flexibility */
+.text-color-gray {
+	@apply text-gray-500 dark:text-gray-300;
+}

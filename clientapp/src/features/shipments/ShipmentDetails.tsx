@@ -83,7 +83,7 @@ const ShipmentDetails = () => {
 			// Mock data for demonstration
 			const mockShipment: ShipmentDetail = {
 				id: id || "1",
-				trackingNumber: `TRK-${id}` || "TRK-12345678",
+				trackingNumber: id ? `TRK-${id}` : "TRK-12345678",
 				status: "IN_TRANSIT", // Default status
 				currentLocation: "local_warehouse",
 				senderName: "John Smith",

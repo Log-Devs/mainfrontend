@@ -130,3 +130,28 @@ export const GHANA_REGIONS = [
 	{ id: "oti", name: "Oti Region" },
 	{ id: "savannah", name: "Savannah Region" }
 ];
+// Define and export initialFormData
+export const initialFormData = {
+	senderName: "",
+	senderAddress: "",
+	senderContact: "",
+	senderEmail: "",
+	senderPhone: "",
+	senderCity: "",
+	senderState: "",
+	senderZip: "",
+	senderCountry: "",
+	recipientName: "",
+	recipientAddress: "",
+	recipientContact: "",
+	recipientCountry: "",
+	recipientPhoneCountryCode: "",
+	recipientId: "",
+	recipientKnowsId: false,
+	packageType: "",
+	packageCategory: "",
+	packageWeight: "",
+	packageDescription: "",
+	freightType: "",
+	// Add more fields as needed for your forms
+};
