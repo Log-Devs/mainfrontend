@@ -3,14 +3,6 @@ import SearchBar from "../../components/SearchBar";
 import StatusFilter from "../../components/StatusFilter";
 import ShipmentList from "../../components/ShipmentList";
 
-// This file is now replaced by ShipmentsPage, AwaitingShipments, and ShippingHistory wrappers.
-// You can remove this file or keep it for reference, but it is no longer used in the router.
-
-//   // TODO: Fetch past shipments from API here// useEffect(() => {// API: Placeholder for fetching past shipments// import axios from "axios"; // Uncomment when ready to use APIs
-
-//   // Example: axios.get('/api/shipments/past').then(...)
-// }, []);
-
 interface Shipment {
   id: string;
   description: string;
@@ -18,40 +10,29 @@ interface Shipment {
   origin?: string;
   destination?: string;
   status?: string;
-  estimatedDelivery?: string; // Add estimatedDelivery field
-  // Add more properties as needed
+  estimatedDelivery?: string;
 }
 
-const PastShipments = () => {
+interface ShipmentsPageProps {
+  title: string;
+  filterStatus: string[];
+  emptyMessage?: string;
+}
+
+const STATUS_OPTIONS = [
+  { value: "", label: "All Statuses" },
+  { value: "pending", label: "Pending" },
+  { value: "in-transit", label: "In Transit" },
+  { value: "processing", label: "Processing" },
+  { value: "delayed", label: "Delayed" },
+  { value: "delivered", label: "Delivered" },
+];
+
+const ShipmentsPage = ({ title, filterStatus, emptyMessage }: ShipmentsPageProps) => {
   const [loading, setLoading] = useState(true);
   const [shipments, setShipments] = useState<Shipment[]>([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
-
-  // Example statuses for filter dropdown
-  const STATUS_OPTIONS = [
-    { value: "", label: "All Statuses" },
-    { value: "pending", label: "Pending" },
-    { value: "in-transit", label: "In Transit" },
-    { value: "processing", label: "Processing" },
-    { value: "delayed", label: "Delayed" },
-    { value: "delivered", label: "Delivered" },
-  ];
-
-  // Filtered shipments
-  const filteredShipments = shipments.filter((shipment) => {
-    const matchesSearch =
-      search === "" ||
-      shipment.description?.toLowerCase().includes(search.toLowerCase()) ||
-      shipment.id?.toLowerCase().includes(search.toLowerCase()) ||
-      shipment.trackingNumber?.toLowerCase().includes(search.toLowerCase()) ||
-      shipment.origin?.toLowerCase().includes(search.toLowerCase()) ||
-      shipment.destination?.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus =
-      !status ||
-      (shipment.status && shipment.status.toLowerCase() === status);
-    return matchesSearch && matchesStatus;
-  });
 
   // Dummy data for demonstration
   useEffect(() => {
@@ -119,10 +100,45 @@ const PastShipments = () => {
         status: "processing",
         estimatedDelivery: "May 26, 2025",
       },
+      {
+        id: "8",
+        description: "Shoes - Sneakers",
+        trackingNumber: "TRK-10008",
+        origin: "Paris, France",
+        destination: "Accra, Ghana",
+        status: "delivered",
+        estimatedDelivery: "May 10, 2025",
+      },
+      {
+        id: "9",
+        description: "Phones - Smartphones",
+        trackingNumber: "TRK-10009",
+        origin: "Berlin, Germany",
+        destination: "Kumasi, Ghana",
+        status: "delivered",
+        estimatedDelivery: "May 12, 2025",
+      },
     ];
     setShipments(dummyShipments);
     setLoading(false);
   }, []);
+
+  // Filtered shipments
+  const filteredShipments = shipments.filter((shipment) => {
+    // Only show shipments matching the filterStatus prop
+    const inStatusGroup = filterStatus.length === 0 || (shipment.status && filterStatus.includes(shipment.status));
+    const matchesSearch =
+      search === "" ||
+      shipment.description?.toLowerCase().includes(search.toLowerCase()) ||
+      shipment.id?.toLowerCase().includes(search.toLowerCase()) ||
+      shipment.trackingNumber?.toLowerCase().includes(search.toLowerCase()) ||
+      shipment.origin?.toLowerCase().includes(search.toLowerCase()) ||
+      shipment.destination?.toLowerCase().includes(search.toLowerCase());
+    const matchesStatus =
+      !status ||
+      (shipment.status && shipment.status.toLowerCase() === status);
+    return inStatusGroup && matchesSearch && matchesStatus;
+  });
 
   if (loading) {
     return (
@@ -134,7 +150,7 @@ const PastShipments = () => {
 
   return (
     <div className="mx-auto space-y-6">
-      <h1 className="text-2xl font-bold mb-4 dark:text-gray-200">Awaiting Shipments</h1>
+      <h1 className="text-2xl font-bold mb-4 dark:text-gray-200">{title}</h1>
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <SearchBar
           value={search}
@@ -150,12 +166,12 @@ const PastShipments = () => {
         />
       </div>
       {filteredShipments.length > 0 ? (
-        <ShipmentList shipments={filteredShipments} emptyMessage="No awaiting shipments found." />
+        <ShipmentList shipments={filteredShipments} emptyMessage={emptyMessage || "No shipments found."} />
       ) : (
-        <p>No awaiting shipments found.</p>
+        <p>{emptyMessage || "No shipments found."}</p>
       )}
     </div>
   );
 };
 
-export default PastShipments;
+export default ShipmentsPage;
