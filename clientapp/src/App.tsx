@@ -7,7 +7,8 @@ import "./App.css";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import Dashboard from "./features/dashboard/Dashboard";
 import SubmitGoods from "./features/shipments/SubmitGoods";
-import PastShipments from "./features/shipments/PastShipments";
+import AwaitingShipments from "./features/shipments/AwaitingShipments";
+import ShippingHistory from "./features/shipments/ShippingHistory";
 import ReportIssue from "./features/report/ReportIssue";
 import Settings from "./features/settings/Settings";
 
@@ -29,8 +30,8 @@ function AppRoutes() {
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/submit" element={<SubmitGoods />} />
-        <Route path="/awaiting" element={<PastShipments />} />
-        <Route path="/history" element={<PastShipments />} />
+        <Route path="/awaiting" element={<AwaitingShipments />} />
+        <Route path="/history" element={<ShippingHistory />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/report" element={<ReportIssue />} />
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
