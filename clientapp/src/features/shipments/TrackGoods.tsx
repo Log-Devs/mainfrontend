@@ -22,7 +22,15 @@ const TrackGoods = () => {
   };
 
   const handleTrack = () => {
-    // TODO: Implement tracking logic
+    // Mock tracking information for demonstration
+    const mockTrackingInfo: TrackingInfo = {
+      id: "12345",
+      status: "In Transit",
+      location: "New York, NY",
+      lastUpdate: "2023-03-15",
+    };
+
+    setTrackingInfo(mockTrackingInfo);
     console.log("Tracking number:", trackingNumber);
   };
 
@@ -31,10 +39,17 @@ const TrackGoods = () => {
       <h1>Track Your Goods</h1>
       <input
         type="text"
-        value={trackingNumber}
         onChange={handleInputChange}
         placeholder="Enter your tracking number"
       />
+      {trackingInfo && (
+        <>
+          <p>ID: {trackingInfo.id}</p>
+          <p>Status: {trackingInfo.status}</p>
+          <p>Location: {trackingInfo.location}</p>
+          <p>Last Update: {trackingInfo.lastUpdate}</p>
+        </>
+      )}
       <button onClick={handleTrack}>Track</button>
       {trackingInfo && (
         <div>

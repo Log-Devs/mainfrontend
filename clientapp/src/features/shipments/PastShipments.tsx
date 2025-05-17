@@ -15,8 +15,18 @@ const PastShipments = () => {
   const [shipments, setShipments] = useState<Shipment[]>([]);
 
   useEffect(() => {
-    // TODO: Fetch past shipments from API here
-    // Example: axios.get('/api/shipments/past').then(response => setShipments(response.data));
+    // Fetch past shipments from API here
+    const fetchShipments = async () => {
+      try {
+        const response = await fetch('/api/shipments/past'); // Replace with actual API endpoint
+        const data: Shipment[] = await response.json();
+        setShipments(data);
+      } catch (error) {
+        console.error("Error fetching shipments:", error);
+      }
+    };
+
+    fetchShipments();
   }, []);
 
   return (
