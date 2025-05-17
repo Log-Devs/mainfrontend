@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 // import axios from "axios"; // Uncomment when ready to use APIs
 // import { fetchDashboardData, submitShipment, fetchHistory, fetchAwaitingShipments, updateSettings } from "./api"; // Example API imports
@@ -9,7 +8,6 @@ import DashboardLayout from "./components/layout/DashboardLayout";
 import Dashboard from "./features/dashboard/Dashboard";
 import SubmitGoods from "./features/shipments/SubmitGoods";
 import PastShipments from "./features/shipments/PastShipments";
-import Profile from "./features/settings/Profile";
 import ReportIssue from "./features/report/ReportIssue";
 import Settings from "./features/settings/Settings";
 

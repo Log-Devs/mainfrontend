@@ -1,15 +1,23 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 //   // TODO: Fetch tracking info from API here// const handleTrack = (trackingNumber) => {// API: Placeholder for tracking shipments// import axios from "axios"; // Uncomment when ready to use APIs
 
 //   // Example: axios.get(`/api/shipments/track/${trackingNumber}`).then(...)
 // };
 
+interface TrackingInfo {
+  // Define tracking info properties here when implementing the tracking API
+  id?: string;
+  status?: string;
+  location?: string;
+  lastUpdate?: string;
+}
+
 const TrackGoods = () => {
   const [trackingNumber, setTrackingNumber] = useState("");
-  const [trackingInfo, setTrackingInfo] = useState(null);
+  const [trackingInfo, setTrackingInfo] = useState<TrackingInfo | null>(null);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTrackingNumber(e.target.value);
   };
 

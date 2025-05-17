@@ -67,7 +67,7 @@ interface PackageFormProps {
 		packageDescription: string;
 		packageNote: string;
 	};
-	onInputChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+	onInputChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
 	onPackageNoteChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 

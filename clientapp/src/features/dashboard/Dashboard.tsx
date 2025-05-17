@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 // import axios from "axios"; // Uncomment when ready to use APIs
 import { Package, Truck, Clock, MapPin } from "lucide-react";
 
-import { LEGAL_COMPANY_NAME, DUMMY_USER } from "../../app-config";
+import { LEGAL_COMPANY_NAME } from "../../app-config";
 import StatCard from "../../components/StatCard";
 import ShipmentVolumeChart from "../../components/ShipmentVolumeChart";
 import ShipmentStatusChart from "../../components/ShipmentStatusChart";

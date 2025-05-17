@@ -211,7 +211,8 @@ const SubmitGoods = () => {
 					<RecipientForm
 						formData={formData}
 						onInputChange={handleInputChange}
-						onUsaAddressInput={handleInputChange}
+						onAddressInput={handleInputChange}
+						onAddressKeyDown={() => { }}
 						addressSuggestions={[]}
 						addressLoading={false}
 						addressError={null}
@@ -291,11 +292,11 @@ const highlightMatch = (suggestion: AddressSuggestion, input: string): React.Rea
 	);
 };
 
-// highlightMatch for RecipientForm (expects { id, label })
-const highlightMatchLabel = (suggestion: { id: string; label: string }, input: string): React.ReactNode => {
-	if (!input) return suggestion.label;
+// highlightMatch for RecipientForm (uses AddressSuggestion type)
+const highlightMatchLabel = (suggestion: AddressSuggestion, input: string): React.ReactNode => {
+	if (!input || !suggestion.display_name) return suggestion.display_name || '';
 	const regex = new RegExp(`(${input})`, 'gi');
-	const parts = suggestion.label.split(regex);
+	const parts = suggestion.display_name.split(regex);
 	return parts.map((part, i) =>
 		regex.test(part) ? <span key={i} className="bg-yellow-200">{part}</span> : part
 	);

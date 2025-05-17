@@ -1,5 +1,3 @@
-import React from "react";
-
 const StepIndicator = ({ step }: { step: number }) => (
 	<div className="flex items-center justify-center gap-4 mb-6">
 		{[1, 2, 3, 4].map((s) => (

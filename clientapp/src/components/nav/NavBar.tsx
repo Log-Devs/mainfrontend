@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { USER_NAME } from "../../app-config";
 import { Menu, Bell, User as UserIcon, X } from "lucide-react";
 import { ThemeToggle } from "../theme/ThemeToggle";

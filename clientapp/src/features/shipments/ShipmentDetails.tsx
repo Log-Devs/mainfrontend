@@ -3,10 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import {
 	Package,
 	MapPin,
-	Calendar,
 	Clock,
 	Truck,
-	ArrowRight,
 	CheckCircle,
 	AlertCircle,
 	User,
