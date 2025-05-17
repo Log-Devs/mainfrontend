@@ -28,7 +28,11 @@ const STATUS_OPTIONS = [
   { value: "delivered", label: "Delivered" },
 ];
 
-const ShipmentsPage = ({ title, filterStatus, emptyMessage }: ShipmentsPageProps) => {
+const ShipmentsPage = ({
+  title,
+  filterStatus,
+  emptyMessage,
+}: ShipmentsPageProps) => {
   const [loading, setLoading] = useState(true);
   const [shipments, setShipments] = useState<Shipment[]>([]);
   const [search, setSearch] = useState("");
@@ -36,6 +40,19 @@ const ShipmentsPage = ({ title, filterStatus, emptyMessage }: ShipmentsPageProps
 
   // Dummy data for demonstration
   useEffect(() => {
+    // Fetch past shipments from API here
+    // const fetchShipments = async () => {
+    //   try {
+    //     const response = await fetch('/api/shipments/past'); // Replace with actual API endpoint
+    //     const data: Shipment[] = await response.json();
+    //     setShipments(data);
+    //   } catch (error) {
+    //     console.error("Error fetching shipments:", error);
+    //   }
+    // };
+
+    // fetchShipments();
+
     const dummyShipments: Shipment[] = [
       {
         id: "1",
@@ -126,7 +143,9 @@ const ShipmentsPage = ({ title, filterStatus, emptyMessage }: ShipmentsPageProps
   // Filtered shipments
   const filteredShipments = shipments.filter((shipment) => {
     // Only show shipments matching the filterStatus prop
-    const inStatusGroup = filterStatus.length === 0 || (shipment.status && filterStatus.includes(shipment.status));
+    const inStatusGroup =
+      filterStatus.length === 0 ||
+      (shipment.status && filterStatus.includes(shipment.status));
     const matchesSearch =
       search === "" ||
       shipment.description?.toLowerCase().includes(search.toLowerCase()) ||
@@ -135,8 +154,7 @@ const ShipmentsPage = ({ title, filterStatus, emptyMessage }: ShipmentsPageProps
       shipment.origin?.toLowerCase().includes(search.toLowerCase()) ||
       shipment.destination?.toLowerCase().includes(search.toLowerCase());
     const matchesStatus =
-      !status ||
-      (shipment.status && shipment.status.toLowerCase() === status);
+      !status || (shipment.status && shipment.status.toLowerCase() === status);
     return inStatusGroup && matchesSearch && matchesStatus;
   });
 
@@ -154,19 +172,22 @@ const ShipmentsPage = ({ title, filterStatus, emptyMessage }: ShipmentsPageProps
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <SearchBar
           value={search}
-          onChange={e => setSearch(e.target.value)}
+          onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by tracking number, description, origin, destination..."
           className="w-full md:w-1/2 rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-700 transition-all"
         />
         <StatusFilter
           value={status}
-          onChange={e => setStatus(e.target.value)}
+          onChange={(e) => setStatus(e.target.value)}
           options={STATUS_OPTIONS}
           className="w-full md:w-1/4 rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-700 transition-all"
         />
       </div>
       {filteredShipments.length > 0 ? (
-        <ShipmentList shipments={filteredShipments} emptyMessage={emptyMessage || "No shipments found."} />
+        <ShipmentList
+          shipments={filteredShipments}
+          emptyMessage={emptyMessage || "No shipments found."}
+        />
       ) : (
         <p>{emptyMessage || "No shipments found."}</p>
       )}
